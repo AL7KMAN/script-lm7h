@@ -1,252 +1,345 @@
-local WindUI = loadstring(game:HttpGet("https://github.com/Footagesus/WindUI/releases/latest/download/main.lua"))()
+local UserInputService = game:GetService("UserInputService")
+local TweenService = game:GetService("TweenService")
+local RunService = game:GetService("RunService")
+local CoreGui = game:GetService("CoreGui")
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
 
-local Window = WindUI:CreateWindow({
-    Title = "Abood",
-    Author = "by abood",
-    Folder = "AboodMenu",
-    OpenButton = {
-        Title = "Open Abood",
-        Enabled = true,
-        Draggable = true
-    }
-})
+local morfinLib = {
+    black = Color3.fromRGB(0, 0, 0),
+    purpleMix = Color3.fromRGB(138, 43, 226),
+    purplePink = Color3.fromRGB(128, 0, 128),
+    purple = Color3.fromRGB(200, 100, 220),
+    darkPurple = Color3.fromRGB(45, 10, 60),
+    white = Color3.fromRGB(255, 255, 255)
+}
 
-local MapTab = Window:Tab({
-    Title = "Strongest Battlegrounds",
-    Icon = "sword"
-})
+getgenv().SnapEnabled = false
+getgenv().SnapVal = 0
+getgenv().SnapMode = "Above"
+getgenv().BaseY = nil
 
-MapTab:Button({
-    Title = "Strongest",
-    Callback = function()
-        loadstring(game:HttpGet("https://rawscripts.net/raw/The-Strongest-Battlegrounds-Porject-Yielding-Best-Farm-For-TSB-224226"))()
+pcall(function()
+    if CoreGui:FindFirstChild("Snap_CustomContainerGUI") then
+        CoreGui.Snap_CustomContainerGUI:Destroy()
     end
-})
+end)
 
-local BloxTab = Window:Tab({
-    Title = "Blox Fruits",
-    Icon = "apple"
-})
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "Snap_CustomContainerGUI"
+ScreenGui.ResetOnSpawn = false
+ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
-BloxTab:Button({
-    Title = "Redz",
-    Callback = function()
-        loadstring(game:HttpGet("https://rawscripts.net/raw/Universal-Script-Redz-hub-205954"))()
+pcall(function()
+    if syn and syn.protect_gui then
+        syn.protect_gui(ScreenGui)
+    elseif protectgui then
+        protectgui(ScreenGui)
     end
+end)
+
+ScreenGui.Parent = CoreGui
+
+local ContainerFrame = Instance.new("ImageLabel")
+ContainerFrame.Name = "ContainerFrame"
+ContainerFrame.Size = UDim2.new(0, 240, 0, 105)
+ContainerFrame.Position = UDim2.new(0.5, -120, 0.4, 0)
+ContainerFrame.BackgroundTransparency = 1
+ContainerFrame.Image = "rbxassetid://117106459651864"
+ContainerFrame.ScaleType = Enum.ScaleType.Fit
+ContainerFrame.Active = true
+ContainerFrame.Parent = ScreenGui
+
+local ContainerCorner = Instance.new("UICorner")
+ContainerCorner.CornerRadius = UDim.new(0, 16)
+ContainerCorner.Parent = ContainerFrame
+
+local TitleLabel = Instance.new("TextLabel")
+TitleLabel.Size = UDim2.new(0, 140, 0, 25)
+TitleLabel.Position = UDim2.new(0.5, -70, 0, 8)
+TitleLabel.BackgroundTransparency = 1
+TitleLabel.Text = "LM7H"
+TitleLabel.TextColor3 = morfinLib.white
+TitleLabel.Font = Enum.Font.GothamBold
+TitleLabel.TextSize = 14
+TitleLabel.TextXAlignment = Enum.TextXAlignment.Center
+TitleLabel.ZIndex = 5
+TitleLabel.Active = true
+TitleLabel.Parent = ContainerFrame
+
+local TitleGradient = Instance.new("UIGradient")
+TitleGradient.Color = ColorSequence.new({
+    ColorSequenceKeypoint.new(0, morfinLib.purple),
+    ColorSequenceKeypoint.new(1, morfinLib.black)
 })
+TitleGradient.Parent = TitleLabel
 
-BloxTab:Button({
-    Title = "Quantum",
-    Callback = function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/Quantum-Hub-Script/Quantum-Hub/main/QuantumHub.lua"))()
-    end
-})
+local draggingFrame = false
+local dragInput, dragStart, startPos
 
-local FPSTab = Window:Tab({
-    Title = "FPS & Performance",
-    Icon = "gauge"
-})
-
-FPSTab:Button({
-    Title = "FPS Booster",
-    Callback = function()
-        local lp = game:GetService("Players").LocalPlayer
-        local pgui = lp:WaitForChild("PlayerGui")
-        local sg = Instance.new("ScreenGui", pgui)
-        sg.Name = "FPS_Cap"
-        sg.ResetOnSpawn = false
-        local f = Instance.new("Frame", sg)
-        f.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
-        f.Position = UDim2.new(0.1, 0, 0.1, 0)
-        f.Size = UDim2.new(0, 140, 0, 90)
-        f.Active = true
-        f.Draggable = true
-        Instance.new("UICorner", f).CornerRadius = UDim.new(0, 8)
-        local box = Instance.new("TextBox", f)
-        box.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-        box.Position = UDim2.new(0.1, 0, 0.2, 0)
-        box.Size = UDim2.new(0.8, 0, 0.3, 0)
-        box.Font = Enum.Font.SourceSans
-        box.PlaceholderText = "FPS..."
-        box.Text = "60"
-        box.TextColor3 = Color3.new(1, 1, 1)
-        Instance.new("UICorner", box)
-        local btn = Instance.new("TextButton", f)
-        btn.BackgroundColor3 = Color3.fromRGB(65, 65, 65)
-        btn.Position = UDim2.new(0.1, 0, 0.6, 0)
-        btn.Size = UDim2.new(0.8, 0, 0.3, 0)
-        btn.Text = "Apply"
-        btn.TextColor3 = Color3.new(1, 1, 1)
-        btn.Font = Enum.Font.SourceSansBold
-        Instance.new("UICorner", btn)
-        btn.MouseButton1Click:Connect(function()
-            if setfpscap then setfpscap(tonumber(box.Text) or 60) end
-        end)
-    end
-})
-
-FPSTab:Button({
-    Title = "Anti Lag",
-    Callback = function()
-        local Players = game:GetService("Players")
-        local RunService = game:GetService("RunService")
-        local Lighting = game:GetService("Lighting")
-        local LocalPlayer = Players.LocalPlayer
-        local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
-
-        local ScreenGui = Instance.new("ScreenGui")
-        ScreenGui.Name = "AntiLagGui"
-        ScreenGui.ResetOnSpawn = false
-        ScreenGui.Parent = PlayerGui
-
-        local Frame = Instance.new("Frame")
-        Frame.Size = UDim2.new(0.3, 0, 0.06, 0)
-        Frame.Position = UDim2.new(0.35, 0, 0.9, 0)
-        Frame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
-        Frame.BorderSizePixel = 0
-        Frame.Parent = ScreenGui
-
-        local Corner = Instance.new("UICorner")
-        Corner.CornerRadius = UDim.new(0, 8)
-        Corner.Parent = Frame
-
-        local Label = Instance.new("TextLabel")
-        Label.Size = UDim2.new(1, 0, 1, 0)
-        Label.BackgroundTransparency = 1
-        Label.Text = "تم تفعيل السكربت بنجاح"
-        Label.TextColor3 = Color3.fromRGB(0, 220, 100)
-        Label.TextScaled = true
-        Label.Font = Enum.Font.GothamBold
-        Label.Parent = Frame
-
-        task.delay(5, function()
-            for i = 0, 1, 0.05 do
-                Frame.BackgroundTransparency = i
-                Label.TextTransparency = i
-                task.wait(0.05)
-            end
-            ScreenGui:Destroy()
-        end)
-
-        local function AntiLag()
-            for _, v in ipairs(workspace:GetDescendants()) do
-                if v:IsA("ParticleEmitter") or v:IsA("Trail") or v:IsA("Smoke") or v:IsA("Fire") or v:IsA("Sparkles") then
-                    v.Enabled = false
-                    v.Rate = 0
-                end
-                if v:IsA("BasePart") then
-                    v.CastShadow = false
-                    v.Material = Enum.Material.SmoothPlastic
-                end
-                if v:IsA("Decal") or v:IsA("Texture") then
-                    v.Transparency = 1
-                end
-                if v:IsA("Sound") then
-                    v.Volume = 0
-                end
-            end
-
-            Lighting.GlobalShadows = false
-            Lighting.FogEnd = 9e9
-            Lighting.FogStart = 9e9
-            Lighting.Brightness = 1
-            Lighting.ClockTime = 14
-            Lighting.Ambient = Color3.fromRGB(178, 178, 178)
-
-            for _, effect in ipairs(Lighting:GetChildren()) do
-                if effect:IsA("BlurEffect") or effect:IsA("DepthOfFieldEffect") or effect:IsA("SunRaysEffect") or effect:IsA("ColorCorrectionEffect") or effect:IsA("BloomEffect") then
-                    effect.Enabled = false
-                end
-            end
-
-            settings().Rendering.QualityLevel = Enum.QualityLevel.Level01
-
-            pcall(function()
-                workspace.StreamingEnabled = true
-            end)
-        end
-
-        AntiLag()
-
-        workspace.DescendantAdded:Connect(function(v)
-            task.wait()
-            if v:IsA("ParticleEmitter") or v:IsA("Trail") or v:IsA("Smoke") or v:IsA("Fire") or v:IsA("Sparkles") then
-                v.Enabled = false
-                v.Rate = 0
-            end
-            if v:IsA("BasePart") then
-                v.CastShadow = false
-            end
-        end)
-
-        LocalPlayer.Chatted:Connect(function(message)
-            if message:lower() == ";antilag" then
-                AntiLag()
+TitleLabel.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+        draggingFrame = true
+        dragStart = input.Position
+        startPos = ContainerFrame.Position
+        
+        input.Changed:Connect(function()
+            if input.UserInputState == Enum.UserInputState.End then
+                draggingFrame = false
             end
         end)
     end
-})
+end)
 
-FPSTab:Button({
-    Title = "ANTIAFK",
-    Callback = function()
-        local vu = game:GetService("VirtualUser")
-        game:GetService("Players").LocalPlayer.Idled:Connect(function()
-            vu:Button2Down(Vector2.new(0,0), workspace.CurrentCamera.CFrame)
-            task.wait(1)
-            vu:Button2Up(Vector2.new(0,0), workspace.CurrentCamera.CFrame)
-        end)
+TitleLabel.InputChanged:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+        dragInput = input
     end
-})
-local MiscTab = Window:Tab({
-    Title = "Player Misc",
-    Icon = "user"
-})
+end)
 
-MiscTab:Button({
-    Title = "Infinite Yield",
-    Callback = function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source"))()
+UserInputService.InputChanged:Connect(function(input)
+    if input == dragInput and draggingFrame then
+        local delta = input.Position - dragStart
+        ContainerFrame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
     end
-})
+end)
 
-local ThemeTab = Window:Tab({
-    Title = "Themes",
-    Icon = "palette"
-})
+local CloseBtn = Instance.new("TextButton")
+CloseBtn.Size = UDim2.new(0, 18, 0, 18)
+CloseBtn.Position = UDim2.new(0, 14, 0, 11)
+CloseBtn.BackgroundTransparency = 1
+CloseBtn.Text = "X"
+CloseBtn.TextColor3 = morfinLib.white
+CloseBtn.Font = Enum.Font.GothamBold
+CloseBtn.TextSize = 10
+CloseBtn.ZIndex = 10
+CloseBtn.Parent = ContainerFrame
 
-ThemeTab:Dropdown({
-    Title = "Choose Theme",
-    Values = {"Dark", "Light", "Red", "Emerald", "Amber"},
-    Value = "Dark",
-    Callback = function(ThemeName)
-        WindUI:SetTheme(ThemeName)
+local CloseGradient = Instance.new("UIGradient")
+CloseGradient.Color = ColorSequence.new({
+    ColorSequenceKeypoint.new(0, morfinLib.purple),
+    ColorSequenceKeypoint.new(1, morfinLib.black)
+})
+CloseGradient.Rotation = 45
+CloseGradient.Parent = CloseBtn
+
+CloseBtn.MouseButton1Click:Connect(function() ScreenGui:Destroy() end)
+
+local ToggleBtn = Instance.new("TextButton")
+ToggleBtn.Size = UDim2.new(0, 36, 0, 16)
+ToggleBtn.Position = UDim2.new(1, -50, 0, 12)
+ToggleBtn.BackgroundTransparency = 1
+ToggleBtn.Text = "OFF"
+ToggleBtn.TextColor3 = morfinLib.white
+ToggleBtn.Font = Enum.Font.GothamBold
+ToggleBtn.TextSize = 10
+ToggleBtn.ZIndex = 5
+ToggleBtn.Parent = ContainerFrame
+
+local ToggleGradient = Instance.new("UIGradient")
+ToggleGradient.Color = ColorSequence.new({
+    ColorSequenceKeypoint.new(0, morfinLib.purple),
+    ColorSequenceKeypoint.new(1, morfinLib.black)
+})
+ToggleGradient.Parent = ToggleBtn
+
+local SliderContainer = Instance.new("Frame")
+SliderContainer.Size = UDim2.new(0.70, 0, 0, 22)
+SliderContainer.Position = UDim2.new(0.15, 0, 0, 45)
+SliderContainer.BackgroundTransparency = 1
+SliderContainer.ZIndex = 5
+SliderContainer.Active = true
+SliderContainer.Parent = ContainerFrame
+
+local SliderTitle = Instance.new("TextLabel")
+SliderTitle.Size = UDim2.new(1, 0, 0, 8)
+SliderTitle.BackgroundTransparency = 1
+SliderTitle.Text = "Height: 0"
+SliderTitle.TextColor3 = morfinLib.white
+SliderTitle.Font = Enum.Font.GothamBold
+SliderTitle.TextSize = 7.5
+SliderTitle.TextXAlignment = Enum.TextXAlignment.Left
+SliderTitle.ZIndex = 5
+SliderTitle.Active = false
+SliderTitle.Parent = SliderContainer
+
+local SliderTitleGradient = Instance.new("UIGradient")
+SliderTitleGradient.Color = ColorSequence.new({
+    ColorSequenceKeypoint.new(0, morfinLib.purpleMix),
+    ColorSequenceKeypoint.new(1, morfinLib.black)
+})
+SliderTitleGradient.Parent = SliderTitle
+
+local SliderTrack = Instance.new("Frame")
+SliderTrack.Size = UDim2.new(1, 0, 0, 4)
+SliderTrack.Position = UDim2.new(0, 0, 0, 12)
+SliderTrack.BackgroundColor3 = morfinLib.black
+SliderTrack.BorderSizePixel = 0
+SliderTrack.ZIndex = 5
+SliderTrack.Active = false
+SliderTrack.Parent = SliderContainer
+
+local TrackCorner = Instance.new("UICorner")
+TrackCorner.CornerRadius = UDim.new(1, 0)
+TrackCorner.Parent = SliderTrack
+
+local TrackStroke = Instance.new("UIStroke")
+TrackStroke.Thickness = 1
+TrackStroke.Color = morfinLib.darkPurple
+TrackStroke.Parent = SliderTrack
+
+local SliderFill = Instance.new("Frame")
+SliderFill.Size = UDim2.new(0, 0, 1, 0)
+SliderFill.BackgroundColor3 = morfinLib.purpleMix
+SliderFill.BorderSizePixel = 0
+SliderFill.ZIndex = 5
+SliderFill.Active = false
+SliderFill.Parent = SliderTrack
+
+local FillCorner = Instance.new("UICorner")
+FillCorner.CornerRadius = UDim.new(1, 0)
+FillCorner.Parent = SliderFill
+
+local FillGradient = Instance.new("UIGradient")
+FillGradient.Color = ColorSequence.new({
+    ColorSequenceKeypoint.new(0, morfinLib.purple),
+    ColorSequenceKeypoint.new(1, morfinLib.black)
+})
+FillGradient.Parent = SliderFill
+
+local SliderKnob = Instance.new("Frame")
+SliderKnob.Size = UDim2.new(0, 10, 0, 10)
+SliderKnob.AnchorPoint = Vector2.new(0.5, 0.5)
+SliderKnob.Position = UDim2.new(0, 0, 0.5, 0)
+SliderKnob.BackgroundColor3 = morfinLib.darkPurple
+SliderKnob.BorderSizePixel = 0
+SliderKnob.ZIndex = 6
+SliderKnob.Active = false
+SliderKnob.Parent = SliderTrack
+
+local KnobCorner = Instance.new("UICorner")
+KnobCorner.CornerRadius = UDim.new(1, 0)
+KnobCorner.Parent = SliderKnob
+
+local KnobStroke = Instance.new("UIStroke")
+KnobStroke.Thickness = 1
+KnobStroke.Color = morfinLib.purpleMix
+KnobStroke.Parent = SliderKnob
+
+local KnobGradient = Instance.new("UIGradient")
+KnobGradient.Color = ColorSequence.new({
+    ColorSequenceKeypoint.new(0, morfinLib.purplePink),
+    ColorSequenceKeypoint.new(1, morfinLib.black)
+})
+KnobGradient.Parent = SliderKnob
+
+local ModeBtn = Instance.new("TextButton")
+ModeBtn.Size = UDim2.new(0.8, 0, 0, 16)
+ModeBtn.Position = UDim2.new(0.1, 0, 0, 75)
+ModeBtn.BackgroundColor3 = morfinLib.black
+ModeBtn.Text = "MODE: ABOVE < "
+ModeBtn.TextColor3 = morfinLib.white
+ModeBtn.Font = Enum.Font.GothamBold
+ModeBtn.TextSize = 8.5
+ModeBtn.ZIndex = 5
+ModeBtn.Parent = ContainerFrame
+
+local ModeCorner = Instance.new("UICorner")
+ModeCorner.CornerRadius = UDim.new(0, 6)
+ModeCorner.Parent = ModeBtn
+
+local ModeStroke = Instance.new("UIStroke")
+ModeStroke.Thickness = 1
+ModeStroke.Color = morfinLib.purpleMix
+ModeStroke.Transparency = 0.5
+ModeStroke.Parent = ModeBtn
+
+local ModeGradient = Instance.new("UIGradient")
+ModeGradient.Color = ColorSequence.new({
+    ColorSequenceKeypoint.new(0, morfinLib.purple),
+    ColorSequenceKeypoint.new(1, morfinLib.black)
+})
+ModeGradient.Parent = ModeBtn
+
+local maxVal = 50
+local draggingSlider = false
+local currentTouchInput = nil
+
+-- Anti-Glitch: حساب السحب بدقة بدون تعليق ومحمي ضد تداخل اللمسات
+local function updateSlider(xPos)
+    local trackWidth = SliderTrack.AbsoluteSize.X
+    if trackWidth <= 0 then return end
+    
+    local relativeX = xPos - SliderTrack.AbsolutePosition.X
+    local pos = math.clamp(relativeX / trackWidth, 0, 1)
+    local val = math.floor(pos * maxVal)
+    
+    getgenv().SnapVal = val
+    SliderTitle.Text = "Height: " .. tostring(val)
+    
+    SliderFill.Size = UDim2.new(pos, 0, 1, 0)
+    SliderKnob.Position = UDim2.new(pos, 0, 0.5, 0)
+end
+
+SliderContainer.InputBegan:Connect(function(input)
+    if (input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch) and not draggingFrame then
+        draggingSlider = true
+        currentTouchInput = input
+        updateSlider(input.Position.X)
     end
-})
+end)
 
-local ServerTab = Window:Tab({
-    Title = "Server",
-    Icon = "server"
-})
-
-ServerTab:Button({
-    Title = "Rejoin",
-    Callback = function()
-        game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, game.JobId, game.Players.LocalPlayer)
+UserInputService.InputChanged:Connect(function(input)
+    if draggingSlider and (input == currentTouchInput or input.UserInputType == Enum.UserInputType.MouseMovement) then
+        updateSlider(input.Position.X)
     end
-})
+end)
 
-local CreditsTab = Window:Tab({
-    Title = "Credits",
-    Icon = "info"
-})
+UserInputService.InputEnded:Connect(function(input)
+    if input == currentTouchInput or input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+        draggingSlider = false
+        currentTouchInput = nil
+    end
+end)
 
-CreditsTab:Button({
-    Title = "Developer: Abood",
-    Callback = function() setclipboard("Abood") end
-})
+ToggleBtn.MouseButton1Click:Connect(function()
+    getgenv().SnapEnabled = not getgenv().SnapEnabled
+    if not getgenv().SnapEnabled then
+        getgenv().BaseY = nil
+        ToggleBtn.Text = "OFF"
+        ToggleGradient.Color = ColorSequence.new({
+            ColorSequenceKeypoint.new(0, morfinLib.purple),
+            ColorSequenceKeypoint.new(1, morfinLib.black)
+        })
+    else
+        ToggleBtn.Text = "ON"
+        ToggleGradient.Color = ColorSequence.new({
+            ColorSequenceKeypoint.new(0, morfinLib.white),
+            ColorSequenceKeypoint.new(1, morfinLib.purpleMix)
+        })
+    end
+end)
 
-CreditsTab:Button({
-    Title = "TikTok: 7rbx_9",
-    Callback = function() setclipboard("7rbx_9") end
-})
+ModeBtn.MouseButton1Click:Connect(function()
+    if getgenv().SnapMode == "Above" then
+        getgenv().SnapMode = "Under"
+        ModeBtn.Text = "MODE: UNDER < "
+    else
+        getgenv().SnapMode = "Above"
+        ModeBtn.Text = "MODE: ABOVE < "
+    end
+end)
+
+RunService.Heartbeat:Connect(function()
+    if getgenv().SnapEnabled and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+        local hrp = LocalPlayer.Character.HumanoidRootPart
+        if not getgenv().BaseY then getgenv().BaseY = hrp.Position.Y end
+        local offset = (getgenv().SnapMode == "Above" and getgenv().SnapVal) or -getgenv().SnapVal
+        local targetY = getgenv().BaseY + offset
+        hrp.CFrame = CFrame.new(hrp.Position.X, targetY, hrp.Position.Z) * (hrp.CFrame - hrp.CFrame.Position)
+        hrp.AssemblyLinearVelocity = Vector3.new(hrp.AssemblyLinearVelocity.X, 0, hrp.AssemblyLinearVelocity.Z)
+    else
+        getgenv().BaseY = nil
+    end
+end)
+
